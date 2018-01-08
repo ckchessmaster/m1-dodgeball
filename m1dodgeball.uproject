@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{44F9F28F-4E88-61F7-A691-F398AE4B0635}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "m1dodgeball",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
