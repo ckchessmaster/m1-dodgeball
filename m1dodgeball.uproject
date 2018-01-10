@@ -7,7 +7,11 @@
 		{
 			"Name": "m1dodgeball",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"UMG",
+				"Engine"
+			]
 		}
 	]
 }
