@@ -14,7 +14,7 @@ class M1DODGEBALL_API AMenuPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 private:
-	FString Username;
+
 
 public:
 	// Reference UMG Asset in the Editor
@@ -26,10 +26,4 @@ public:
 
 	// Override BeingPlay()
 	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintPure, Category = "User")
-	FString GetUsername();
-
-	UFUNCTION(BlueprintCallable, Category = "User")
-	void SetUsername(FString username);
 };

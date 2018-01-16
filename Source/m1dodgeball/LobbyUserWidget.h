@@ -13,8 +13,10 @@ UCLASS()
 class M1DODGEBALL_API ULobbyUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
-	
+
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateLobbyBP();
 	
 	
 };

@@ -24,15 +24,4 @@ void AMenuPlayerController::BeginPlay() {
 	}
 }
 
-FString AMenuPlayerController::GetUsername()
-{
-	return Username;
-}
-
-void AMenuPlayerController::SetUsername(FString username)
-{
-	Username = username;
-}
-
-
 
