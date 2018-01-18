@@ -55,12 +55,6 @@ void ALobbyGameState::MovePlayerToTeam(int Team, FString Username)
 		ALobbyPlayerController* lpc = (ALobbyPlayerController*)UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		lpc->UpdateLobby();
 	}
-
-	/*for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
-	{
-		ALobbyPlayerController* lpc = (ALobbyPlayerController*)Iterator->Get();
-		/lpc->UpdateLobby();
-	}*/
 }
 
 void ALobbyGameState::OnRep_UpdateLobby() 

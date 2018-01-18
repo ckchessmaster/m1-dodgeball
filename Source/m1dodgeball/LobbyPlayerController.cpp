@@ -5,6 +5,7 @@
 #include "Engine.h"
 #include "LobbyGameState.h"
 #include "LobbyGameMode.h"
+#include "LobbyPlayerState.h"
 
 void ALobbyPlayerController::BeginPlay() 
 {
@@ -25,6 +26,15 @@ bool ALobbyPlayerController::ChangeTeam_Validate(int Team, const FString& Userna
 	return true;
 }
 
+void ALobbyPlayerController::ChangeTeam_Implementation(int Team, const FString& Username)
+{
+	if (Role == ROLE_Authority) {
+		GetWorld()->GetAuthGameMode()->GetGameState<ALobbyGameState>()->MovePlayerToTeam(Team, Username);
+		((ALobbyPlayerState*)PlayerState)->SetTeam(Team);
+	}
+}
+
+// SeamlessTravelTo
 void ALobbyPlayerController::StartGame_Implementation()
 {
 	if (Role == ROLE_Authority) {
@@ -36,11 +46,4 @@ bool ALobbyPlayerController::StartGame_Validate()
 {
 	//Eventually check if player is actually the host
 	return true;
-}
-
-void ALobbyPlayerController::ChangeTeam_Implementation(int Team, const FString& Username)
-{
-	if (Role == ROLE_Authority) {
-		GetWorld()->GetAuthGameMode()->GetGameState<ALobbyGameState>()->MovePlayerToTeam(Team, Username);
-	}
 }
