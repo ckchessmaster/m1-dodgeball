@@ -7,11 +7,18 @@
 #include "LobbyGameMode.h"
 #include "LobbyPlayerState.h"
 
-void ALobbyPlayerController::BeginPlay() 
+void ALobbyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
 	UpdateLobby();
+}
+
+void ALobbyPlayerController::PreClientTravel(const FString & PendingURL, ETravelType TravelType, bool bIsSeamlessTravel)
+{
+	Super::PreClientTravel(PendingURL, TravelType, bIsSeamlessTravel);
+
+	MainMenu->RemoveFromViewport();
 }
 
 void ALobbyPlayerController::UpdateLobby()

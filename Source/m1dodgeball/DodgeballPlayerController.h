@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "MenuPlayerController.h"
 #include "DodgeballPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class M1DODGEBALL_API ADodgeballPlayerController : public APlayerController
+class M1DODGEBALL_API ADodgeballPlayerController : public AMenuPlayerController
 {
 	GENERATED_BODY()
 	
