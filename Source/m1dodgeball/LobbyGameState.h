@@ -17,7 +17,7 @@ private:
 	UFUNCTION()
 	void OnRep_UpdateLobby();
 
-	UPROPERTY(ReplicatedUsing= OnRep_UpdateLobby)
+	UPROPERTY(ReplicatedUsing = OnRep_UpdateLobby)
 	TArray<FString> Team1;
 	UPROPERTY(ReplicatedUsing = OnRep_UpdateLobby)
 	TArray<FString> Team2;
