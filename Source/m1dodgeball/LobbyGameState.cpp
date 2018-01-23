@@ -19,11 +19,11 @@ TArray<FString> ALobbyGameState::GetTeam(int Team)
 {
 	switch (Team) {
 	case 0:
-		return Team1;
-	case 1:
-		return Team2;
-	case 2:
 		return Spectators;
+	case 1:
+		return Team1;
+	case 2:
+		return Team2;
 	default:
 		return TArray<FString>();
 	}
@@ -39,13 +39,13 @@ void ALobbyGameState::MovePlayerToTeam(int Team, FString Username)
 	// Add player to a team
 	switch (Team) {
 	case 0:
-		Team1.Add(Username);
+		Spectators.Add(Username);
 		break;
 	case 1:
-		Team2.Add(Username);
+		Team1.Add(Username);
 		break;
 	case 2:
-		Spectators.Add(Username);
+		Team2.Add(Username);
 		break;
 	default:
 		break;

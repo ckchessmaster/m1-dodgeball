@@ -19,7 +19,7 @@ APlayerController* ALobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRo
 	FString username = UGameplayStatics::ParseOption(Options, "Username");
 
 	NewController->PlayerState->PlayerName = username;
-	GetGameState<ALobbyGameState>()->MovePlayerToTeam(2, username);
+	GetGameState<ALobbyGameState>()->MovePlayerToTeam(0, username);
 
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
