@@ -4,4 +4,9 @@
 
 
 
+void ADodgeballPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
 
+	bShowMouseCursor = false;
+}

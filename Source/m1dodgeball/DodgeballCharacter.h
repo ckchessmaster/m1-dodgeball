@@ -4,23 +4,44 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "AbilitySystemInterface.h" 
 #include "DodgeballCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class AbilityType : uint8
+{
+	ThrowBall UMETA(DisplayName = "Throw a dodgeball"),
+	UseAbility UMETA(DisplayName = "Use chosen ability")
+};
+
 UCLASS()
-class M1DODGEBALL_API ADodgeballCharacter : public ACharacter
+class M1DODGEBALL_API ADodgeballCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
-private:
+	/** Our ability system */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
+	class UAbilitySystemComponent* AbilitySystem;
 
+	//Replicate this
+	int BallCount;
+	int Health;
+
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override //We add this function, overriding it from IAbilitySystemInterface.
+	{
+		return AbilitySystem;
+	};
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	/** First person camera */
 	UPROPERTY(EditAnywhere, Category = Camera)
 	class UCameraComponent* FirstPersonCameraComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Abilities)
+	TSubclassOf<class UGameplayAbility> DefaultAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Abilities)
+	TSubclassOf<class UGameplayAbility> Ability;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(EditAnywhere, Category = Camera)
@@ -30,20 +51,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Camera)
 	float BaseLookUpRate;
 
-	/** Projectile class to spawn */
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	TSubclassOf<class ABallActor> ProjectileClass;
-
-	/** Sound to play each time we fire */
-	UPROPERTY(EditAnywhere, Category = Gameplay)
-	class USoundBase* FireSound;
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
-
-	/** Fires a projectile. */
-	void OnFire();
 
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);
@@ -64,13 +77,21 @@ protected:
 	void LookUpAtRate(float Rate);
 
 public:	
+	/** Returns FirstPersonCameraComponent subobject **/
+	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
 	// Sets default values for this character's properties
 	ADodgeballCharacter();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	/** Returns FirstPersonCameraComponent subobject **/
-	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+	void Die();
+
+	UFUNCTION(BlueprintPure, Category = Data)
+	int GetBallCount() { return BallCount;	};
+	void SetBallCount(int NewBallCount) { BallCount = NewBallCount; }
+
+	
 	
 };

@@ -15,7 +15,9 @@ class M1DODGEBALL_API ADodgeballPlayerController : public AMenuPlayerController
 {
 	GENERATED_BODY()
 	
-	
+public:
+
+	virtual void BeginPlay() override;
 	
 	
 };
