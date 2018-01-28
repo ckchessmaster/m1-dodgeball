@@ -15,10 +15,10 @@ void UThrowBallAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (HasAuthority(&ActivationInfo) && BallClass != nullptr && ActorInfo->PlayerController != nullptr) {
+	if (BallClass != nullptr && ActorInfo->PlayerController != nullptr) {
 		ADodgeballCharacter* Owner = Cast<ADodgeballCharacter>(ActorInfo->OwnerActor.Get());
 		UWorld* const World = GetWorld();
-		if (World && Owner->GetBallCount() > 0) {
+		if (World /*&& Owner->GetBallCount() > 0*/) {
 			const FRotator SpawnRotation = ActorInfo->PlayerController->GetControlRotation();
 			const FVector SpawnLocation = Owner->GetActorLocation() + (Owner->GetActorForwardVector() * 2);
 
@@ -31,7 +31,7 @@ void UThrowBallAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 			// Decrement ball count
 			Owner->SetBallCount(Owner->GetBallCount() - 1);
-		}
+		}//end world check
 	}
 
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
