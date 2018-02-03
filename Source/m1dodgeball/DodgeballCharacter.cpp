@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Engine.h"
 #include "BallActor.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -27,7 +28,22 @@ ADodgeballCharacter::ADodgeballCharacter()
 
 	// Our ability system component.
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
+
+	bReplicates = true;
+	bReplicateMovement = true;
+
+	bCanBeDamaged = true;
+
 }
+
+void ADodgeballCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate to everyone
+	DOREPLIFETIME(ADodgeballCharacter, BallCount);
+	DOREPLIFETIME(ADodgeballCharacter, Health);
+}//end GetLifetimeReplicatedProps
 
 // Called to bind functionality to input
 void ADodgeballCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -39,9 +55,6 @@ void ADodgeballCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	// Bind fire event
-	//PlayerInputComponent->BindAction("Throw", IE_Pressed, this, &ADodgeballCharacter::ThrowBall);
-
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &ADodgeballCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ADodgeballCharacter::MoveRight);
@@ -51,10 +64,32 @@ void ADodgeballCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	// Used to pickup a dodgeball
-	//PlayerInputComponent->BindAction("Pickup", IE_Pressed, this, &ADodgeballCharacter::PickupBall);
+	PlayerInputComponent->BindAction("Pickup", IE_Pressed, this, &ADodgeballCharacter::AttemptPickupBall);
 
 	// Bind input to the ability system
 	AbilitySystem->BindAbilityActivationToInputComponent(PlayerInputComponent, FGameplayAbiliyInputBinds("ConfirmInput", "CancelInput", "AbilityType"));
+}
+
+void ADodgeballCharacter::PossessedBy(AController * NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (AbilitySystem) {
+		if (HasAuthority() && DefaultAttack) {
+			AbilitySystem->GiveAbility(FGameplayAbilitySpec(DefaultAttack.GetDefaultObject(), 1, 0));
+		}
+
+		AbilitySystem->InitAbilityActorInfo(this, this);
+		InitAbilitySystemClient();
+	}
+}
+
+void ADodgeballCharacter::InitAbilitySystemClient_Implementation()
+{
+	if (AbilitySystem)
+	{
+		AbilitySystem->InitAbilityActorInfo(this, this);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -62,17 +97,13 @@ void ADodgeballCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Add more abilities like this:
-	if (AbilitySystem) {
-		if (HasAuthority() && DefaultAttack) {
-			AbilitySystem->GiveAbility(FGameplayAbilitySpec(DefaultAttack.GetDefaultObject(), 1, 0));
-		}
-		AbilitySystem->InitAbilityActorInfo(this, this);
-	}//end ability system init
-
-	// Start the game with a ball
+	 // Start the game with a ball
 	BallCount = 1;
 	Health = 1;
+
+	TraceTag = FName("TestTag");
+
+	GetWorld()->DebugDrawTraceTag = TraceTag;
 }
 
 // Called every frame
@@ -80,7 +111,46 @@ void ADodgeballCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Highlight the ball if we are looking at it
+
+	FCollisionQueryParams CollisionParams;
+	//CollisionParams.TraceTag = TraceTag; // Used to draw debug lines ingame
+
+	//Re-initialize hit info
+	FHitResult Hit(ForceInit);
+
+	UCameraComponent* Camera = GetFirstPersonCameraComponent();
+	FVector FinalLocation = (Camera->GetForwardVector() * 5000) + Camera->GetComponentLocation();
+	GetWorld()->LineTraceSingleByChannel(Hit, Camera->GetComponentLocation(), FinalLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
+
+	ABallActor* ball = Cast<ABallActor>(Hit.Actor.Get());
+
+	if (ball) {
+		Cast<ABallActor>(Hit.Actor.Get())->GetMeshComponent()->SetRenderCustomDepth(true);
+		HighlightedActor = ball;
+	} else {
+		// Unhighlight the actor
+		if (HighlightedActor) {
+			ABallActor* ball = Cast<ABallActor>(HighlightedActor);
+			ball->GetMeshComponent()->SetRenderCustomDepth(false);
+			HighlightedActor = nullptr;
+		}// end if
+	}//end if/else
 }
+float ADodgeballCharacter::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	
+	Health -= FinalDamage;
+
+	if (Health <= 0) {
+		Die();
+	}
+	
+	
+	return FinalDamage;
+}
+// end tick
 
 void ADodgeballCharacter::MoveForward(float Value)
 {
@@ -89,7 +159,7 @@ void ADodgeballCharacter::MoveForward(float Value)
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
-}
+}//end moveforward
 
 void ADodgeballCharacter::MoveRight(float Value)
 {
@@ -110,6 +180,35 @@ void ADodgeballCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ADodgeballCharacter::AttemptPickupBall()
+{
+	PickupBall(GetFirstPersonCameraComponent()->GetForwardVector());
+}
+
+bool ADodgeballCharacter::PickupBall_Validate(FVector ForwardVector)
+{
+	return true;
+}
+
+void ADodgeballCharacter::PickupBall_Implementation(FVector ForwardVector)
+{
+	if (HasAuthority()) {
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.TraceTag = TraceTag;
+		FHitResult Hit(ForceInit);
+		UCameraComponent* Camera = GetFirstPersonCameraComponent();
+		FVector FinalLocation = (ForwardVector * 5000) + Camera->GetComponentLocation();
+		GetWorld()->LineTraceSingleByChannel(Hit, Camera->GetComponentLocation(), FinalLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
+
+		ABallActor* ball = Cast<ABallActor>(Hit.Actor.Get());
+
+		if (ball) {
+			BallCount++;
+			ball->Destroy();
+		}
+	}
 }
 
 void ADodgeballCharacter::Die()

@@ -23,9 +23,15 @@ class M1DODGEBALL_API ADodgeballCharacter : public ACharacter, public IAbilitySy
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	class UAbilitySystemComponent* AbilitySystem;
 
-	//Replicate this
-	int BallCount;
-	int Health;
+	// For display purposes only
+	AActor* HighlightedActor;
+
+	FName TraceTag;
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	UFUNCTION(Client, Reliable)
+	void InitAbilitySystemClient();
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override //We add this function, overriding it from IAbilitySystemInterface.
 	{
@@ -34,7 +40,7 @@ class M1DODGEBALL_API ADodgeballCharacter : public ACharacter, public IAbilitySy
 
 protected:
 	/** First person camera */
-	UPROPERTY(EditAnywhere, Category = Camera)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
 	class UCameraComponent* FirstPersonCameraComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Abilities)
@@ -50,6 +56,13 @@ protected:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(EditAnywhere, Category = Camera)
 	float BaseLookUpRate;
+
+	//Replicate this
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	int BallCount;
+	
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	int Health;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -76,6 +89,13 @@ protected:
 	*/
 	void LookUpAtRate(float Rate);
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void PickupBall(FVector ForwardVector);
+	void PickupBall_Implementation(FVector ForwardVector);
+	bool PickupBall_Validate(FVector ForwardVector);
+
+	void AttemptPickupBall();
+
 public:	
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
@@ -85,6 +105,7 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 	void Die();
 

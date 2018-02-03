@@ -4,6 +4,12 @@
 #include "Engine.h"
 #include "DodgeballCharacter.h"
 
+UThrowBallAbility::UThrowBallAbility(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
 
 bool UThrowBallAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo * ActorInfo, const FGameplayTagContainer * SourceTags, const FGameplayTagContainer * TargetTags, OUT FGameplayTagContainer * OptionalRelevantTags) const
 {
@@ -14,11 +20,11 @@ bool UThrowBallAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Hand
 void UThrowBallAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
-	if (BallClass != nullptr && ActorInfo->PlayerController != nullptr) {
+	
+	if (BallClass != nullptr && ActorInfo->PlayerController != nullptr && HasAuthority(&ActivationInfo)) {
 		ADodgeballCharacter* Owner = Cast<ADodgeballCharacter>(ActorInfo->OwnerActor.Get());
 		UWorld* const World = GetWorld();
-		if (World /*&& Owner->GetBallCount() > 0*/) {
+		if (World && Owner->GetBallCount() > 0) {
 			const FRotator SpawnRotation = ActorInfo->PlayerController->GetControlRotation();
 			const FVector SpawnLocation = Owner->GetActorLocation() + (Owner->GetActorForwardVector() * 2);
 

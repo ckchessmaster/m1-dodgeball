@@ -18,6 +18,4 @@ class M1DODGEBALL_API ADodgeballPlayerController : public AMenuPlayerController
 public:
 
 	virtual void BeginPlay() override;
-	
-	
 };

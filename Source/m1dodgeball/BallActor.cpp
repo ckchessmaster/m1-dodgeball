@@ -2,12 +2,15 @@
 
 #include "BallActor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 ABallActor::ABallActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bReplicates = true;
+	bReplicateMovement = true;
 
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -24,6 +27,13 @@ ABallActor::ABallActor(const FObjectInitializer& ObjectInitializer) : Super(Obje
 	// Set as root component
 	RootComponent = CollisionComp;
 
+	BallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BallMesh"));
+	if (BallMesh) {
+		BallMesh->SetupAttachment(CollisionComp);
+		//BallMesh->SetMobility(EComponentMobility::Movable);
+		//BallMesh->SetSimulatePhysics(true);
+	}
+
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
@@ -31,6 +41,14 @@ ABallActor::ABallActor(const FObjectInitializer& ObjectInitializer) : Super(Obje
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
+}
+
+void ABallActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate to everyone
+	DOREPLIFETIME(ABallActor, IsActive);
 }
 
 void ABallActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

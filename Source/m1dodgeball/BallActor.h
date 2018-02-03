@@ -16,11 +16,14 @@ class M1DODGEBALL_API ABallActor : public AActor
 	class UProjectileMovementComponent* ProjectileMovement;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile)
+	class UStaticMeshComponent* BallMesh;
+
 	/** Sphere collision component */
-	UPROPERTY(EditAnywhere, Category = Projectile)
+	UPROPERTY(VisibleAnywhere, Category = Projectile)
 	class USphereComponent* CollisionComp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile, ReplicatedUsing = OnHitBP)
 	bool IsActive;
 
 public:	
@@ -40,4 +43,5 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 	
+	UStaticMeshComponent* GetMeshComponent() { return BallMesh; }
 };

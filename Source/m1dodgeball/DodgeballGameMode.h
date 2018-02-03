@@ -15,12 +15,15 @@ class M1DODGEBALL_API ADodgeballGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-private:
 	TArray<APlayerStart*> UsedStarts;
+
+	void SpawnPlayers();
 
 public:
 	ADodgeballGameMode(const FObjectInitializer& ObjectInitializer);
 	
+	virtual void BeginPlay() override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+	virtual void Tick(float DeltaTime) override;
 	
 };
