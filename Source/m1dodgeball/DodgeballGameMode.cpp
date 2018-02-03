@@ -117,5 +117,21 @@ void ADodgeballGameMode::Tick(float DeltaTime)
 
 void ADodgeballGameMode::SpawnPlayers()
 {
+	for (FConstPlayerControllerIterator Itr = GetWorld()->GetPlayerControllerIterator(); Itr; ++Itr) {
+		APlayerController* Player = Itr->Get();
+		Player->UnPossess();
 
+		AActor* Spawn = ChoosePlayerStart(Player);
+
+		if (Spawn) {
+			FVector Location = Spawn->GetActorLocation();
+			FRotator Rotation = Spawn->GetActorRotation();
+			FActorSpawnParameters SpawnInfo;
+			ACharacter* NewCharacter = GetWorld()->SpawnActor<ACharacter>(DefaultPawnClass, Location, Rotation, SpawnInfo);
+
+			if (NewCharacter) {
+				Player->Possess(NewCharacter);
+			}
+		}
+	}
 }
