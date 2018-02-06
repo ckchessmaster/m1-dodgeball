@@ -13,4 +13,7 @@ void ADodgeballPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
 
 	NewPlayerState->SetPlayerName(PlayerName);
 	((ALobbyPlayerState*)NewPlayerState)->SetTeam(GetTeam());
+
+	// Move everything over to a tag system in the future
+	Tags.Add("Team " + GetTeam());
 }

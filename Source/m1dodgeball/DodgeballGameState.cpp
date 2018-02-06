@@ -2,11 +2,14 @@
 
 #include "DodgeballGameState.h"
 #include "Net/UnrealNetwork.h"
+#include "DodgeballGameMode.h"
 
 ADodgeballGameState::ADodgeballGameState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	CurrentMatchState = EMatchState::MS_PreGame;
 	PreviousMatchState = EMatchState::MS_PreGame;
+	CurrentRound = 0;
+	MaxRounds = 3;
 }
 
 void ADodgeballGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -15,17 +18,15 @@ void ADodgeballGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 
 	DOREPLIFETIME(ADodgeballGameState, CurrentMatchState);
 	DOREPLIFETIME(ADodgeballGameState, GameTime);
-}
-
-void ADodgeballGameState::OnMatchStateChanged()
-{
-	OnMatchStateChangedBP();
+	DOREPLIFETIME(ADodgeballGameState, CurrentRound);
 }
 
 void ADodgeballGameState::SetMatchState(EMatchState NewMatchState)
 {
-	PreviousMatchState = CurrentMatchState;
-	CurrentMatchState = NewMatchState;
+	if (HasAuthority()) {
+		PreviousMatchState = CurrentMatchState;
+		CurrentMatchState = NewMatchState;
 
-	OnMatchStateChanged();
+		Cast<ADodgeballGameMode>(AuthorityGameMode)->OnMatchStateChanged(NewMatchState);
+	}
 }

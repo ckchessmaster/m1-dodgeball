@@ -15,9 +15,9 @@ class M1DODGEBALL_API ADodgeballPlayerState : public ALobbyPlayerState
 {
 	GENERATED_BODY()
 
+protected:
+
 public:
 	virtual void BeginPlay() override;
 	virtual void SeamlessTravelTo(APlayerState* NewPlayerState) override;
-	
-	
 };

@@ -2,21 +2,21 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Core.h"
 #include "GameFramework/GameStateBase.h"
 #include "DodgeballGameState.generated.h"
 
 UENUM(BlueprintType)
 enum class EMatchState : uint8
 {
+	MS_Paused			UMETA(DisplayName = "Paused"),
 	MS_PreGame			UMETA(DisplayName = "Pre Game"),
 	MS_AbilitySelect	UMETA(DisplayName = "Ability Select"),
 	MS_RoundBegin		UMETA(DisplayName = "Round Begin"),
 	MS_RoundInProgress	UMETA(DisplayName = "Round In Progress"),
 	MS_SuddenDeath		UMETA(DisplayName = "Sudden Death"),
 	MS_RoundEnd			UMETA(DisplayName = "Round End"),
-	MS_GameEnd			UMETA(DisplayName = "Game End"),
-	MS_Paused			UMETA(DisplayName = "Paused"),
+	MS_GameEnd			UMETA(DisplayName = "Game End")
 };
 
 UCLASS()
@@ -26,18 +26,17 @@ class M1DODGEBALL_API ADodgeballGameState : public AGameStateBase
 
 protected:
 
-	UPROPERTY(ReplicatedUsing = OnMatchStateChanged)
+	UPROPERTY(Replicated)
 	EMatchState CurrentMatchState;
 	EMatchState PreviousMatchState;
 
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly)
+	int CurrentRound;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int MaxRounds;
+
 	UPROPERTY(Replicated)
 	float GameTime; // game time in seconds
-
-	UFUNCTION()
-	void OnMatchStateChanged();
-	
-	UFUNCTION(BlueprintCosmetic, BlueprintImplementableEvent)
-	void OnMatchStateChangedBP();
 
 public:
 	ADodgeballGameState(const FObjectInitializer& ObjectInitializer);
@@ -60,12 +59,18 @@ public:
 
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	EMatchState GetMatchState() { return CurrentMatchState; }
+	EMatchState GetPreviousMatchState() { return PreviousMatchState; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetGameTime(float NewTime) { GameTime = NewTime; }
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	float GetGameTime() { return GameTime; }
 	
-	
+	UFUNCTION(BlueprintCallable)
+	void NewRound() { CurrentRound++; }
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	float GetCurrentRound() { return CurrentRound; }
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	float GetMaxRounds() { return MaxRounds; }
 	
 };

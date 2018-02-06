@@ -82,6 +82,8 @@ void ADodgeballCharacter::PossessedBy(AController * NewController)
 		AbilitySystem->InitAbilityActorInfo(this, this);
 		InitAbilitySystemClient();
 	}
+
+	SetOwner(NewController);
 }
 
 void ADodgeballCharacter::InitAbilitySystemClient_Implementation()
@@ -141,13 +143,13 @@ float ADodgeballCharacter::TakeDamage(float Damage, FDamageEvent const & DamageE
 {
 	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	
-	Health -= FinalDamage;
+	if (HasAuthority()) {
+		Health -= FinalDamage;
 
-	if (Health <= 0) {
-		Die();
+		if (Health <= 0) {
+			Die();
+		}
 	}
-	
-	
 	return FinalDamage;
 }
 // end tick
@@ -211,7 +213,34 @@ void ADodgeballCharacter::PickupBall_Implementation(FVector ForwardVector)
 	}
 }
 
-void ADodgeballCharacter::Die()
+void ADodgeballCharacter::Die_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "I'M DEAD!!!!");
+	
+	if (HasAuthority()) {
+		AActor* Owner = GetOwner();
+		APlayerController* Player = Cast<APlayerController>(Owner);
+
+		if (Player) {
+			// Get the spectator spawn location
+			FVector SpawnLocation;
+			for (TActorIterator<APlayerStart> Itr(GetWorld()); Itr; ++Itr) {
+				if (Itr->PlayerStartTag.Compare("0") == 0) {
+					SpawnLocation = Itr->GetActorLocation();
+				}
+			}
+
+			ASpectatorPawn* NewSpectator = GetWorld()->SpawnActor<ASpectatorPawn>(SpawnLocation, FRotator());
+			if (NewSpectator) {
+				Player->Possess(NewSpectator);
+			}
+		}
+	}
+
+	Tags.Add("Dead");
+
+	// For animation
+	DieBP();
+
+	Destroy();
 }

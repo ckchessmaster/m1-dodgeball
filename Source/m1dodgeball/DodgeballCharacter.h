@@ -96,6 +96,9 @@ protected:
 
 	void AttemptPickupBall();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
+	void DieBP();
+
 public:	
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
@@ -107,7 +110,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
+	UFUNCTION(Reliable, NetMulticast)
 	void Die();
+	void Die_Implementation();
 
 	UFUNCTION(BlueprintPure, Category = Data)
 	int GetBallCount() { return BallCount;	};

@@ -3,7 +3,6 @@
 #include "DodgeballGameMode.h"
 #include "EngineUtils.h"
 #include "DodgeballPlayerState.h"
-#include "DodgeballGameState.h"
 #include "Engine.h"
 
 ADodgeballGameMode::ADodgeballGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -19,7 +18,6 @@ void ADodgeballGameMode::BeginPlay()
 	// change this later
 	ADodgeballGameState* gamestate = GetGameState<ADodgeballGameState>();
 	gamestate->SetMatchState(EMatchState::MS_AbilitySelect);
-	gamestate->SetGameTime(gamestate->AbilitySelectTime);
 }
 
 AActor * ADodgeballGameMode::ChoosePlayerStart_Implementation(AController * Player)
@@ -63,63 +61,102 @@ void ADodgeballGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ADodgeballGameState* gamestate = GetGameState<ADodgeballGameState>();
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::SanitizeFloat(gamestate->GetGameTime()));
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::SanitizeFloat(gamestate->GetGameTime()));
+	ADodgeballGameState* GameState = GetGameState<ADodgeballGameState>();
 
 	switch (GetGameState<ADodgeballGameState>()->GetMatchState()) {
 	case EMatchState::MS_PreGame:
+		// Pre game stuff here
 		break;
 	case EMatchState::MS_AbilitySelect:
-		if (gamestate->GetGameTime() <= 0.f) {
-			gamestate->SetMatchState(EMatchState::MS_RoundBegin);
-			SpawnPlayers();
-			gamestate->SetGameTime(gamestate->RoundBeginTime);
-		} else {
-			gamestate->SetGameTime(gamestate->GetGameTime() - DeltaTime);
-		}// end if/else
-		break;
-	case EMatchState::MS_RoundBegin:
-		if (gamestate->GetGameTime() <= 0.f) {
-			gamestate->SetMatchState(EMatchState::MS_RoundInProgress);
-			gamestate->SetGameTime(gamestate->RoundInProgressTime);
-		} else {
-			gamestate->SetGameTime(gamestate->GetGameTime() - DeltaTime);
-		}// end if/else
-		break;
-	case EMatchState::MS_RoundInProgress:
-		if (gamestate->GetGameTime() <= 0.f) {
-			gamestate->SetMatchState(EMatchState::MS_SuddenDeath);
-			gamestate->SetGameTime(gamestate->SuddenDeathTime);
-		} else {
-			gamestate->SetGameTime(gamestate->GetGameTime() - DeltaTime);
-		}// end if/else
-		break;
-	case EMatchState::MS_SuddenDeath:
-		if (false) {
-			gamestate->SetMatchState(EMatchState::MS_RoundEnd);
-			gamestate->SetGameTime(gamestate->RoundEndTime);
-		} else {
-			gamestate->SetGameTime(gamestate->GetGameTime() + DeltaTime);
-		}// end if/else
-		break;
-	case EMatchState::MS_RoundEnd:
-		if (false) {
-			gamestate->SetMatchState(EMatchState::MS_AbilitySelect);
-			gamestate->SetGameTime(gamestate->AbilitySelectTime);
+		if (GameState->GetGameTime() <= 0.f) {
+			GameState->SetMatchState(EMatchState::MS_RoundBegin);
 		}
 		else {
-			gamestate->SetGameTime(gamestate->GetGameTime() - DeltaTime);
-		}// end if/else
+			GameState->SetGameTime(GameState->GetGameTime() - DeltaTime);
+		}
+		break;
+	case EMatchState::MS_RoundBegin:
+		if (GameState->GetGameTime() <= 0.f) {
+			GameState->SetMatchState(EMatchState::MS_RoundInProgress);
+		}
+		else {
+			GameState->SetGameTime(GameState->GetGameTime() - DeltaTime);
+		}
+		break;
+	case EMatchState::MS_RoundInProgress:
+		if (GameState->GetGameTime() <= 0.f) {
+			GameState->SetMatchState(EMatchState::MS_SuddenDeath);
+		}
+		else {
+			GameState->SetGameTime(GameState->GetGameTime() - DeltaTime);
+		}
+		break;
+	case EMatchState::MS_SuddenDeath:
+		GameState->SetGameTime(GameState->GetGameTime() + DeltaTime);
+		break;
+	case EMatchState::MS_RoundEnd:
+		if (GameState->GetGameTime() <= 0.f) {
+			if (GameState->GetCurrentRound() >= GameState->GetMaxRounds()) {
+				GameState->SetMatchState(EMatchState::MS_GameEnd);
+			} else {
+				GameState->SetMatchState(EMatchState::MS_AbilitySelect);
+			}// end end of game check
+		} else {
+			GameState->SetGameTime(GameState->GetGameTime() - DeltaTime);
+		}
+		break;
+	case EMatchState::MS_GameEnd:
+		if (GameState->GetGameTime() <= 0.f) {
+			// Play again logic
+			if (true) {
+				GetWorld()->ServerTravel("Lobby");
+			}//end play again check
+		}
+		else {
+			GameState->SetGameTime(GameState->GetGameTime() - DeltaTime);
+		}
 		break;
 	}
+}
+
+void ADodgeballGameMode::OnMatchStateChanged(EMatchState NewMatchState)
+{
+	ADodgeballGameState* GameState = GetGameState<ADodgeballGameState>();
+
+	switch (NewMatchState) {
+	case EMatchState::MS_PreGame:
+		// do pregame stuff
+		break;
+	case EMatchState::MS_AbilitySelect:
+		GameState->SetGameTime(GameState->AbilitySelectTime);
+		break;
+	case EMatchState::MS_RoundBegin:
+		GameState->NewRound();
+		SpawnPlayers();
+		GameState->SetGameTime(GameState->RoundBeginTime);
+		break;
+	case EMatchState::MS_RoundInProgress:
+		GameState->SetGameTime(GameState->RoundInProgressTime);
+		break;
+	case EMatchState::MS_SuddenDeath:
+		GameState->SetGameTime(GameState->SuddenDeathTime);
+		break;
+	case EMatchState::MS_RoundEnd:
+		
+		GameState->SetGameTime(GameState->RoundEndTime);
+		break;
+	case EMatchState::MS_GameEnd:
+		GameState->SetGameTime(GameState->GameEndTime);
+		break;
+	}//end switch
 }
 
 void ADodgeballGameMode::SpawnPlayers()
 {
 	for (FConstPlayerControllerIterator Itr = GetWorld()->GetPlayerControllerIterator(); Itr; ++Itr) {
 		APlayerController* Player = Itr->Get();
-		Player->UnPossess();
 
 		AActor* Spawn = ChoosePlayerStart(Player);
 
@@ -130,8 +167,44 @@ void ADodgeballGameMode::SpawnPlayers()
 			ACharacter* NewCharacter = GetWorld()->SpawnActor<ACharacter>(DefaultPawnClass, Location, Rotation, SpawnInfo);
 
 			if (NewCharacter) {
+				Player->PlayerState->Tags.Remove("Dead");
 				Player->Possess(NewCharacter);
+			}//end NewCharacter null check
+		}//end Spawn null check
+	}//end player controller iteration
+}
+
+int ADodgeballGameMode::EndOfRoundCheck()
+{
+	ADodgeballGameState* gamestate = GetGameState<ADodgeballGameState>();
+	
+	TArray<APlayerState*> Team1;
+	TArray<APlayerState*> Team2;
+
+	for (APlayerState* Player : gamestate->PlayerArray) {
+		if (!Player->Tags.Contains("Dead")) {
+			if (Player->Tags.Contains("Team 1")) {
+				Team1.Add(Player);
+			} else if (Player->Tags.Contains("Team 2")) {
+				Team2.Add(Player);
 			}
 		}
+	}
+
+	if (Team1.Num() == 0) {
+		return 2;
+	} else if (Team2.Num() == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+	return 0;
+}
+
+void ADodgeballGameMode::OnPlayerDeath()
+{
+	if (int WinningTeam = EndOfRoundCheck() != 0) {
+		FString Message = FString::Printf(TEXT("Team %d has won!"), WinningTeam);
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, Message);
 	}
 }
