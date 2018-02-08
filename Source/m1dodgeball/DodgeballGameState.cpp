@@ -3,6 +3,8 @@
 #include "DodgeballGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "DodgeballGameMode.h"
+#include "DodgeballPlayerController.h"
+#include "Engine.h"
 
 ADodgeballGameState::ADodgeballGameState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -21,6 +23,26 @@ void ADodgeballGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 	DOREPLIFETIME(ADodgeballGameState, CurrentRound);
 	DOREPLIFETIME(ADodgeballGameState, Team1Score);
 	DOREPLIFETIME(ADodgeballGameState, Team2Score);
+}
+
+void ADodgeballGameState::OnRep_UpdateUI()
+{
+	ADodgeballPlayerController* Player = Cast<ADodgeballPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	
+	switch (CurrentMatchState) {
+	case EMatchState::MS_AbilitySelect:
+		Player->DisplayAbilitySelect();
+		break;
+	case EMatchState::MS_RoundBegin:
+		Player->DisplayHUD();
+		break;
+	case EMatchState::MS_RoundEnd: 
+		Player->DisplayEndOfRound(1);
+		break;
+	case EMatchState::MS_GameEnd: 
+		Player->DisplayEndOfGame(1);
+		break;
+	}//end switch
 }
 
 void ADodgeballGameState::SetMatchState(EMatchState NewMatchState)

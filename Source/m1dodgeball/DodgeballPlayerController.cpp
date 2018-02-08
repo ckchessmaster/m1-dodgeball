@@ -17,7 +17,7 @@ void ADodgeballPlayerController::BeginPlay()
 	Tags.Add("Ready");
 }
 
-void ADodgeballPlayerController::DisplayHUD_Implementation()
+void ADodgeballPlayerController::DisplayHUD()
 {
 	if (IsLocalController()) {
 		bShowMouseCursor = false;
@@ -28,7 +28,7 @@ void ADodgeballPlayerController::DisplayHUD_Implementation()
 	}
 }
 
-void ADodgeballPlayerController::DisplayAbilitySelect_Implementation()
+void ADodgeballPlayerController::DisplayAbilitySelect()
 {
 	if (IsLocalController()) {
 		bShowMouseCursor = true;
@@ -39,7 +39,7 @@ void ADodgeballPlayerController::DisplayAbilitySelect_Implementation()
 	}
 }
 
-void ADodgeballPlayerController::DisplayEndOfRound_Implementation(int WinningTeam)
+void ADodgeballPlayerController::DisplayEndOfRound(int WinningTeam)
 {
 	if (IsLocalController()) {
 		bShowMouseCursor = true;
@@ -50,7 +50,7 @@ void ADodgeballPlayerController::DisplayEndOfRound_Implementation(int WinningTea
 	}
 }
 
-void ADodgeballPlayerController::DisplayEndOfGame_Implementation(int WinningTeam)
+void ADodgeballPlayerController::DisplayEndOfGame(int WinningTeam)
 {
 	if (IsLocalController()) {
 		bShowMouseCursor = true;

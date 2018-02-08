@@ -13,7 +13,7 @@ UCLASS()
 class M1DODGEBALL_API ALobbyGameState : public AGameStateBase
 {
 	GENERATED_BODY()
-private:
+
 	UFUNCTION()
 	void OnRep_UpdateLobby();
 

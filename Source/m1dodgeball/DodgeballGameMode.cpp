@@ -160,50 +160,38 @@ void ADodgeballGameMode::Tick(float DeltaTime)
 void ADodgeballGameMode::OnMatchStateChanged(EMatchState NewMatchState)
 {
 	ADodgeballGameState* GameState = GetGameState<ADodgeballGameState>();
-
+	ADodgeballPlayerController* Player = Cast<ADodgeballPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	
 	switch (NewMatchState) {
 	case EMatchState::MS_PreGame:
 		// do pregame stuff
 		break;
 	case EMatchState::MS_AbilitySelect: {
-		for (FConstPlayerControllerIterator Itr = GetWorld()->GetPlayerControllerIterator(); Itr; ++Itr) {
-			Cast<ADodgeballPlayerController>(Itr->Get())->DisplayAbilitySelect();
-		}
+		Player->DisplayAbilitySelect();
 		GameState->SetGameTime(GameState->AbilitySelectTime);
-	}//end case MS_AbilitySelect
 		break;
-	case EMatchState::MS_RoundBegin: {
+	case EMatchState::MS_RoundBegin:
 		GameState->NewRound();
 		SpawnPlayers();
-		for (FConstPlayerControllerIterator Itr = GetWorld()->GetPlayerControllerIterator(); Itr; ++Itr) {
-			Cast<ADodgeballPlayerController>(Itr->Get())->DisplayHUD();
-		}
+		Player->DisplayHUD();
 		GameState->SetGameTime(GameState->RoundBeginTime);
-	}//end case MS_RoundBegin
 		break;
-	case EMatchState::MS_RoundInProgress: {
+	case EMatchState::MS_RoundInProgress:
 		GameState->SetGameTime(GameState->RoundInProgressTime);
-	}//end case MS_RoundInProgress
 		break;
-	case EMatchState::MS_SuddenDeath: {
+	case EMatchState::MS_SuddenDeath: 
 		GameState->SetGameTime(GameState->SuddenDeathTime);
-	}//end case MS_SuddenDeath
 		break;
-	case EMatchState::MS_RoundEnd: {
+	case EMatchState::MS_RoundEnd: 
 		CleanupWorld();
 		SpawnSpectators();
-		for (FConstPlayerControllerIterator Itr = GetWorld()->GetPlayerControllerIterator(); Itr; ++Itr) {
-			Cast<ADodgeballPlayerController>(Itr->Get())->DisplayEndOfRound(1);
-		}
+		Player->DisplayEndOfRound(1);
 		GameState->SetGameTime(GameState->RoundEndTime);
 	}//end case MS_RoundEnd
 		break;
-	case EMatchState::MS_GameEnd: {
-		for (FConstPlayerControllerIterator Itr = GetWorld()->GetPlayerControllerIterator(); Itr; ++Itr) {
-			Cast<ADodgeballPlayerController>(Itr->Get())->DisplayEndOfGame(1);
-		}
+	case EMatchState::MS_GameEnd:
+		Player->DisplayEndOfGame(1);
 		GameState->SetGameTime(GameState->GameEndTime);
-	}//end case MS_GameEnd
 		break;
 	}//end switch
 }

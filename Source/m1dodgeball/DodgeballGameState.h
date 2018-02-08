@@ -24,9 +24,12 @@ class M1DODGEBALL_API ADodgeballGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 
+		UFUNCTION()
+		void OnRep_UpdateUI();
+
 protected:
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_UpdateUI)
 	EMatchState CurrentMatchState;
 	EMatchState PreviousMatchState;
 
