@@ -23,7 +23,7 @@ void ADodgeballGameMode::BeginPlay()
 	gamestate->SetMatchState(EMatchState::MS_PreGame);
 
 	//testing remove later----------------------------------------------------------------------------------------------------------------------
-	Cast<UDodgeballGameInstance>(GetGameInstance())->SetNumPlayers(4);
+	Cast<UDodgeballGameInstance>(GetGameInstance())->SetNumPlayers(0);
 	//testing remove later----------------------------------------------------------------------------------------------------------------------
 
 }
@@ -246,6 +246,8 @@ void ADodgeballGameMode::CleanupWorld()
 	for (TActorIterator<ABallActor> Itr(GetWorld()); Itr; ++Itr) {
 		Itr->Destroy();
 	}
+
+	UsedStarts.Empty();
 }
 
 int ADodgeballGameMode::EndOfRoundCheck()
