@@ -11,9 +11,9 @@ void ADodgeballPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
 {
 	Super::SeamlessTravelTo(NewPlayerState);
 
-	NewPlayerState->SetPlayerName(PlayerName);
-	((ALobbyPlayerState*)NewPlayerState)->SetTeam(GetTeam());
+	//NewPlayerState->SetPlayerName(PlayerName);
+	//((ALobbyPlayerState*)NewPlayerState)->SetTeam(GetTeam());
 
-	// Move everything over to a tag system in the future
-	Tags.Add("Team " + GetTeam());
+	//// Move everything over to a tag system in the future
+	//NewPlayerState->Tags.Add("Team " + GetTeam());
 }

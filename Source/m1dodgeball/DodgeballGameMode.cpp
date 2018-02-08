@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "DodgeballPlayerController.h"
 #include "BallActor.h"
+#include "DodgeballGameInstance.h"
 
 ADodgeballGameMode::ADodgeballGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -20,6 +21,11 @@ void ADodgeballGameMode::BeginPlay()
 	// change this later
 	ADodgeballGameState* gamestate = GetGameState<ADodgeballGameState>();
 	gamestate->SetMatchState(EMatchState::MS_PreGame);
+
+	//testing remove later----------------------------------------------------------------------------------------------------------------------
+	Cast<UDodgeballGameInstance>(GetGameInstance())->SetNumPlayers(4);
+	//testing remove later----------------------------------------------------------------------------------------------------------------------
+
 }
 
 AActor * ADodgeballGameMode::ChoosePlayerStart_Implementation(AController * Player)
@@ -82,9 +88,19 @@ void ADodgeballGameMode::Tick(float DeltaTime)
 
 	switch (GetGameState<ADodgeballGameState>()->GetMatchState()) {
 	case EMatchState::MS_PreGame: {
-		if (GetWorld()) {
-			GameState->SetMatchState(EMatchState::MS_AbilitySelect);
-		}
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "The number of players is: " + FString::FromInt(GetNumPlayers()));
+		if (GetWorld() != nullptr && GetNumPlayers() >= Cast<UDodgeballGameInstance>(GetGameInstance())->GetNumPlayers()) {
+			// Make sure all players have fired BeginPlay()
+			bool bCanStartGame = true;
+			for (FConstPlayerControllerIterator Itr = GetWorld()->GetPlayerControllerIterator(); Itr; ++Itr) {
+				if (!Cast<APlayerController>(Itr->Get())->Tags.Contains("Ready")) {
+					bCanStartGame = false;
+				}
+			}//end player controller iterator
+			if (bCanStartGame) {
+				GameState->SetMatchState(EMatchState::MS_AbilitySelect);
+			}
+		}//end world check/player join check
 	}//end MS_PreGame
 		break;
 	case EMatchState::MS_AbilitySelect: {
@@ -174,6 +190,7 @@ void ADodgeballGameMode::OnMatchStateChanged(EMatchState NewMatchState)
 	}//end case MS_SuddenDeath
 		break;
 	case EMatchState::MS_RoundEnd: {
+		CleanupWorld();
 		SpawnSpectators();
 		for (FConstPlayerControllerIterator Itr = GetWorld()->GetPlayerControllerIterator(); Itr; ++Itr) {
 			Cast<ADodgeballPlayerController>(Itr->Get())->DisplayEndOfRound(1);

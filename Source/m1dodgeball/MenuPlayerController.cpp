@@ -6,7 +6,7 @@
 void AMenuPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
-	if (wMainMenu) // Check if the Asset is assigned in the blueprint.
+	if (wMainMenu && IsLocalController()) // Check if the Asset is assigned in the blueprint.
 	{
 		// Create the widget and store it.
 		MainMenu = CreateWidget<UUserWidget>(this, wMainMenu);

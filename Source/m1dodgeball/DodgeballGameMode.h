@@ -18,6 +18,8 @@ class M1DODGEBALL_API ADodgeballGameMode : public AGameModeBase
 
 	TArray<APlayerStart*> UsedStarts;
 
+	int NumTravelingPlayers;
+
 	void SpawnPlayers();
 	void SpawnSpectators();
 	AActor* GetSpectatorSpawn();

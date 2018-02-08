@@ -13,41 +13,50 @@ void ADodgeballPlayerController::BeginPlay()
 
 	bShowMouseCursor = true;
 	SetInputMode(FInputModeUIOnly());
+
+	Tags.Add("Ready");
 }
 
 void ADodgeballPlayerController::DisplayHUD_Implementation()
 {
-	bShowMouseCursor = false;
-	SetInputMode(FInputModeGameOnly());
-	if (MainMenu) {
-		Cast<UDodgeballUserWidget>(MainMenu)->DisplayHUDBP();
+	if (IsLocalController()) {
+		bShowMouseCursor = false;
+		SetInputMode(FInputModeGameOnly());
+		if (MainMenu) {
+			Cast<UDodgeballUserWidget>(MainMenu)->DisplayHUDBP();
+		}
 	}
 }
 
 void ADodgeballPlayerController::DisplayAbilitySelect_Implementation()
 {
-	bShowMouseCursor = true;
-	SetInputMode(FInputModeUIOnly());
-	if (MainMenu) {
-		Cast<UDodgeballUserWidget>(MainMenu)->DisplayAbilitySelectBP();
+	if (IsLocalController()) {
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+		if (MainMenu) {
+			Cast<UDodgeballUserWidget>(MainMenu)->DisplayAbilitySelectBP();
+		}
 	}
 }
 
 void ADodgeballPlayerController::DisplayEndOfRound_Implementation(int WinningTeam)
 {
-	bShowMouseCursor = true;
-	SetInputMode(FInputModeUIOnly());
-	if (MainMenu) {
-		Cast<UDodgeballUserWidget>(MainMenu)->DisplayEndOfRoundBP(WinningTeam);
+	if (IsLocalController()) {
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+		if (MainMenu) {
+			Cast<UDodgeballUserWidget>(MainMenu)->DisplayEndOfRoundBP(WinningTeam);
+		}
 	}
 }
 
 void ADodgeballPlayerController::DisplayEndOfGame_Implementation(int WinningTeam)
 {
-	bShowMouseCursor = true;
-	SetInputMode(FInputModeUIOnly());
-	if (MainMenu) {
-		Cast<UDodgeballUserWidget>(MainMenu)->DisplayEndOfGameBP(WinningTeam);
+	if (IsLocalController()) {
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+		if (MainMenu) {
+			Cast<UDodgeballUserWidget>(MainMenu)->DisplayEndOfGameBP(WinningTeam);
+		}
 	}
-	
 }

@@ -19,6 +19,8 @@ void ADodgeballGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 	DOREPLIFETIME(ADodgeballGameState, CurrentMatchState);
 	DOREPLIFETIME(ADodgeballGameState, GameTime);
 	DOREPLIFETIME(ADodgeballGameState, CurrentRound);
+	DOREPLIFETIME(ADodgeballGameState, Team1Score);
+	DOREPLIFETIME(ADodgeballGameState, Team2Score);
 }
 
 void ADodgeballGameState::SetMatchState(EMatchState NewMatchState)

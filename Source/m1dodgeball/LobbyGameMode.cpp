@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "LobbyPlayerController.h"
 #include "Engine.h"
+#include "DodgeballGameInstance.h"
 
 ALobbyGameMode::ALobbyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -32,6 +33,7 @@ APlayerController* ALobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRo
 
 void ALobbyGameMode::StartGame() 
 {
+	Cast<UDodgeballGameInstance>(GetGameInstance())->SetNumPlayers(GetNumPlayers());
 	GetWorld()->ServerTravel("DefaultMap");
 }
 

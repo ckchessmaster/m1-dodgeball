@@ -22,6 +22,9 @@ void ALobbyPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
 
 	NewPlayerState->SetPlayerName(PlayerName);
 	((ALobbyPlayerState*)NewPlayerState)->SetTeam(GetTeam());
+
+	// Move everything over to a tag system in the future
+	NewPlayerState->Tags.Add("Team " + GetTeam());
 }
 
 int ALobbyPlayerState::GetTeam()
