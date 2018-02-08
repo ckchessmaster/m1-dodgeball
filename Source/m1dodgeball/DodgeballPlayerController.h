@@ -18,4 +18,24 @@ class M1DODGEBALL_API ADodgeballPlayerController : public AMenuPlayerController
 public:
 
 	virtual void BeginPlay() override;
+
+	UFUNCTION(Reliable, NetMulticast)
+	void DisplayHUD();
+	void DisplayHUD_Implementation();
+	
+
+	UFUNCTION(Reliable, NetMulticast)
+	void DisplayAbilitySelect();
+	void DisplayAbilitySelect_Implementation();
+	
+
+	UFUNCTION(Reliable, NetMulticast)
+	void DisplayEndOfRound(int WinningTeam);
+	void DisplayEndOfRound_Implementation(int WinningTeam);
+	
+
+	UFUNCTION(Reliable, NetMulticast)
+	void DisplayEndOfGame(int WinningTeam);
+	void DisplayEndOfGame_Implementation(int WinningTeam);
+	
 };

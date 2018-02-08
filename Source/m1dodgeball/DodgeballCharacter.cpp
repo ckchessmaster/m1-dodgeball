@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "BallActor.h"
 #include "Net/UnrealNetwork.h"
+#include "DodgeballGameMode.h"
 
 
 // Sets default values
@@ -215,8 +216,11 @@ void ADodgeballCharacter::PickupBall_Implementation(FVector ForwardVector)
 
 void ADodgeballCharacter::Die_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "I'M DEAD!!!!");
+	// For animation
+	DieBP();
 	
+	Tags.Add("Dead");
+
 	if (HasAuthority()) {
 		AActor* Owner = GetOwner();
 		APlayerController* Player = Cast<APlayerController>(Owner);
@@ -235,12 +239,9 @@ void ADodgeballCharacter::Die_Implementation()
 				Player->Possess(NewSpectator);
 			}
 		}
+
+		Cast<ADodgeballGameMode>(GetWorld()->GetAuthGameMode())->OnPlayerDeath();
 	}
-
-	Tags.Add("Dead");
-
-	// For animation
-	DieBP();
-
+	
 	Destroy();
 }

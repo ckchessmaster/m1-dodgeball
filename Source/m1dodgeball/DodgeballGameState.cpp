@@ -30,3 +30,17 @@ void ADodgeballGameState::SetMatchState(EMatchState NewMatchState)
 		Cast<ADodgeballGameMode>(AuthorityGameMode)->OnMatchStateChanged(NewMatchState);
 	}
 }
+
+void ADodgeballGameState::IncreaseScore(int Team)
+{
+	switch (Team) {
+	case 1:
+		Team1Score = Team1Score++;
+		break;
+	case 2:
+		Team2Score = Team2Score++;
+		break;
+	default:
+		break;
+	}
+}

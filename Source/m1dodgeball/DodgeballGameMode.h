@@ -19,9 +19,14 @@ class M1DODGEBALL_API ADodgeballGameMode : public AGameModeBase
 	TArray<APlayerStart*> UsedStarts;
 
 	void SpawnPlayers();
+	void SpawnSpectators();
+	AActor* GetSpectatorSpawn();
 
 	// Return 0 if round is not over otherwise return the team that has won
 	virtual int EndOfRoundCheck();
+
+protected:
+	virtual void CleanupWorld();
 
 public:
 	ADodgeballGameMode(const FObjectInitializer& ObjectInitializer);

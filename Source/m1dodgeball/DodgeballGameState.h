@@ -38,6 +38,12 @@ protected:
 	UPROPERTY(Replicated)
 	float GameTime; // game time in seconds
 
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly)
+	int Team1Score;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly)
+	int Team2Score;
+
 public:
 	ADodgeballGameState(const FObjectInitializer& ObjectInitializer);
 
@@ -69,8 +75,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void NewRound() { CurrentRound++; }
 	UFUNCTION(BlueprintPure, BlueprintCallable)
-	float GetCurrentRound() { return CurrentRound; }
+	int GetCurrentRound() { return CurrentRound; }
 	UFUNCTION(BlueprintPure, BlueprintCallable)
-	float GetMaxRounds() { return MaxRounds; }
+	int GetMaxRounds() { return MaxRounds; }
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	int GetTeam1Score() { return Team1Score; }
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	int GetTeam2Score() { return Team2Score; }
+	void IncreaseScore(int Team);
 	
 };
