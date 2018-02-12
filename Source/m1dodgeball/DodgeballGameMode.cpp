@@ -259,13 +259,17 @@ int ADodgeballGameMode::EndOfRoundCheck()
 
 	for (APlayerState* Player : gamestate->PlayerArray) {
 		if (!Player->Tags.Contains("Dead")) {
-			if (Player->Tags.Contains("Team 1")) {
+			ADodgeballPlayerState* ConvertedPlayer = Cast<ADodgeballPlayerState>(Player);
+			if (ConvertedPlayer->GetTeam() == 1) {
 				Team1.Add(Player);
-			} else if (Player->Tags.Contains("Team 2")) {
+			} else {
 				Team2.Add(Player);
 			}
 		}
 	}
+
+	//FString Message = FString::Printf(TEXT("Team %d has won!"), WinningTeam);
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, Message);
 
 	if (Team1.Num() == 0) {
 		return 2;
@@ -279,7 +283,8 @@ int ADodgeballGameMode::EndOfRoundCheck()
 
 void ADodgeballGameMode::OnPlayerDeath()
 {
-	if (int WinningTeam = EndOfRoundCheck() != 0) {
+	int WinningTeam = EndOfRoundCheck();
+	if (WinningTeam != 0) {
 		ADodgeballGameState* GameState = GetGameState<ADodgeballGameState>();
 		//FString Message = FString::Printf(TEXT("Team %d has won!"), WinningTeam);
 		//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, Message);

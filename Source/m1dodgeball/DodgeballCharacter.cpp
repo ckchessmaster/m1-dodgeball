@@ -199,7 +199,7 @@ void ADodgeballCharacter::PickupBall_Implementation(FVector ForwardVector)
 {
 	if (HasAuthority()) {
 		FCollisionQueryParams CollisionParams;
-		CollisionParams.TraceTag = TraceTag;
+		//CollisionParams.TraceTag = TraceTag;
 		FHitResult Hit(ForceInit);
 		UCameraComponent* Camera = GetFirstPersonCameraComponent();
 		FVector FinalLocation = (ForwardVector * 5000) + Camera->GetComponentLocation();
