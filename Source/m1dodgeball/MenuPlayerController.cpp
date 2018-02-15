@@ -24,4 +24,11 @@ void AMenuPlayerController::BeginPlay() {
 	}
 }
 
+void AMenuPlayerController::PreClientTravel(const FString & PendingURL, ETravelType TravelType, bool bIsSeamlessTravel)
+{
+	Super::PreClientTravel(PendingURL, TravelType, bIsSeamlessTravel);
+
+	MainMenu->RemoveFromViewport();
+}
+
 

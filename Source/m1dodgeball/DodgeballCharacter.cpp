@@ -219,7 +219,7 @@ void ADodgeballCharacter::Die_Implementation()
 	// For animation
 	DieBP();
 	
-	Tags.Add("Dead");
+	PlayerState->Tags.Add("Dead");
 
 	if (HasAuthority()) {
 		AActor* Owner = GetOwner();

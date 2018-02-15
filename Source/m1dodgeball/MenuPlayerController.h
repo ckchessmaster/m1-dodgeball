@@ -26,4 +26,5 @@ public:
 
 	// Override BeingPlay()
 	virtual void BeginPlay() override;
+	virtual void PreClientTravel(const FString & PendingURL, ETravelType TravelType, bool bIsSeamlessTravel) override;
 };
