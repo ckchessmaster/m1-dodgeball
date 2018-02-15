@@ -23,6 +23,7 @@ class M1DODGEBALL_API ADodgeballGameMode : public AGameModeBase
 	void SpawnPlayers();
 	void SpawnSpectators();
 	AActor* GetSpectatorSpawn();
+	int WinningTeam;
 
 	// Return 0 if round is not over otherwise return the team that has won
 	virtual int EndOfRoundCheck();

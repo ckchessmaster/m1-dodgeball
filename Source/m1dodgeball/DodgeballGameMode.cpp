@@ -21,6 +21,7 @@ void ADodgeballGameMode::BeginPlay()
 	// change this later
 	ADodgeballGameState* gamestate = GetGameState<ADodgeballGameState>();
 	gamestate->SetMatchState(EMatchState::MS_PreGame);
+	WinningTeam = 0;
 
 	//testing remove later----------------------------------------------------------------------------------------------------------------------
 	Cast<UDodgeballGameInstance>(GetGameInstance())->SetNumPlayers(0);
@@ -185,12 +186,17 @@ void ADodgeballGameMode::OnMatchStateChanged(EMatchState NewMatchState)
 	case EMatchState::MS_RoundEnd: 
 		CleanupWorld();
 		SpawnSpectators();
-		Player->DisplayEndOfRound(1);
+		Player->DisplayEndOfRound(WinningTeam);
 		GameState->SetGameTime(GameState->RoundEndTime);
 	}//end case MS_RoundEnd
 		break;
 	case EMatchState::MS_GameEnd:
-		Player->DisplayEndOfGame(1);
+		if (GameState->GetTeam1Score() > GameState->GetTeam2Score()) {
+			WinningTeam = 1;
+		} else { 
+			WinningTeam = 2; 
+		}
+		Player->DisplayEndOfGame(WinningTeam);
 		GameState->SetGameTime(GameState->GameEndTime);
 		break;
 	}//end switch
@@ -283,7 +289,7 @@ int ADodgeballGameMode::EndOfRoundCheck()
 
 void ADodgeballGameMode::OnPlayerDeath()
 {
-	int WinningTeam = EndOfRoundCheck();
+	WinningTeam = EndOfRoundCheck();
 	if (WinningTeam != 0) {
 		ADodgeballGameState* GameState = GetGameState<ADodgeballGameState>();
 		//FString Message = FString::Printf(TEXT("Team %d has won!"), WinningTeam);
