@@ -9,6 +9,8 @@ UThrowBallAbility::UThrowBallAbility(const FObjectInitializer& ObjectInitializer
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
+	
 }
 
 bool UThrowBallAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo * ActorInfo, const FGameplayTagContainer * SourceTags, const FGameplayTagContainer * TargetTags, OUT FGameplayTagContainer * OptionalRelevantTags) const
@@ -22,6 +24,8 @@ void UThrowBallAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
 	if (BallClass != nullptr && ActorInfo->PlayerController != nullptr && HasAuthority(&ActivationInfo)) {
+		CommitAbility(Handle, ActorInfo, ActivationInfo);
+
 		ADodgeballCharacter* Owner = Cast<ADodgeballCharacter>(ActorInfo->OwnerActor.Get());
 		UWorld* const World = GetWorld();
 		if (World && Owner->GetBallCount() > 0) {
