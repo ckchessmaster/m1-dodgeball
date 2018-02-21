@@ -46,9 +46,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Abilities)
 	TSubclassOf<class UGameplayAbility> DefaultAttack;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Abilities)
-	TSubclassOf<class UGameplayAbility> Ability;
-
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(EditAnywhere, Category = Camera)
 	float BaseTurnRate;

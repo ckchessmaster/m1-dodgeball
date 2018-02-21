@@ -17,6 +17,18 @@ void ADodgeballPlayerController::BeginPlay()
 	Tags.Add("Ready");
 }
 
+void ADodgeballPlayerController::SelectAbility_Implementation(TSubclassOf<UDodgeballGameplayAbility> NewAbilityClass)
+{
+	if (HasAuthority()) {
+		AbilityClass = NewAbilityClass;
+	}
+}
+
+bool ADodgeballPlayerController::SelectAbility_Validate(TSubclassOf<UDodgeballGameplayAbility> NewAbilityClass)
+{
+	return true;
+}
+
 void ADodgeballPlayerController::DisplayHUD()
 {
 	if (IsLocalController()) {

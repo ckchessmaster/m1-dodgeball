@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
 #include "BallActor.h"
+#include "DodgeballGameplayAbility.h"
 #include "ThrowBallAbility.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class M1DODGEBALL_API UThrowBallAbility : public UGameplayAbility
+class M1DODGEBALL_API UThrowBallAbility : public UDodgeballGameplayAbility
 {
 	GENERATED_BODY()
 

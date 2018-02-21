@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DodgeballGameplayAbility.h"
 #include "DodgeballUserWidget.generated.h"
 
 /**
@@ -14,6 +15,9 @@ class M1DODGEBALL_API UDodgeballUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Abilities)
+	TArray<TSubclassOf<class UDodgeballGameplayAbility>> AbilityList;
 	
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)

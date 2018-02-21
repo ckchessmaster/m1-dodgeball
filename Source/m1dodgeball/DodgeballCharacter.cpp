@@ -9,6 +9,7 @@
 #include "BallActor.h"
 #include "Net/UnrealNetwork.h"
 #include "DodgeballGameMode.h"
+#include "DodgeballPlayerController.h"
 
 
 // Sets default values
@@ -77,7 +78,12 @@ void ADodgeballCharacter::PossessedBy(AController * NewController)
 
 	if (AbilitySystem) {
 		if (HasAuthority() && DefaultAttack) {
+			// Add default attack ability
 			AbilitySystem->GiveAbility(FGameplayAbilitySpec(DefaultAttack.GetDefaultObject(), 1, 0));
+			
+			// Add special ability
+			ADodgeballPlayerController* Player = Cast<ADodgeballPlayerController>(NewController);
+			AbilitySystem->GiveAbility(FGameplayAbilitySpec(Player->GetAbilityClass().GetDefaultObject(), 1, 0));
 		}
 
 		AbilitySystem->InitAbilityActorInfo(this, this);
