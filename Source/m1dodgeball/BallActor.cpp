@@ -41,6 +41,8 @@ ABallActor::ABallActor(const FObjectInitializer& ObjectInitializer) : Super(Obje
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
+
+	bShouldDieOnHit = false;
 }
 
 void ABallActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -53,12 +55,15 @@ void ABallActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLif
 
 void ABallActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != NULL) && (OtherActor != this) && IsActive)
 	{
 		OtherActor->TakeDamage(1.f, FDamageEvent(), Cast<AController>(GetOwner()), this);
 		IsActive = false;
 		OnHitBP();
+	}
+
+	if (bShouldDieOnHit) {
+		Destroy();
 	}
 }
 

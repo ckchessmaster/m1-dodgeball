@@ -33,11 +33,6 @@ class M1DODGEBALL_API ADodgeballCharacter : public ACharacter, public IAbilitySy
 	UFUNCTION(Client, Reliable)
 	void InitAbilitySystemClient();
 
-	UAbilitySystemComponent* GetAbilitySystemComponent() const override //We add this function, overriding it from IAbilitySystemInterface.
-	{
-		return AbilitySystem;
-	};
-
 protected:
 	/** First person camera */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
@@ -113,8 +108,11 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = Data)
 	int GetBallCount() { return BallCount;	};
+	UFUNCTION(BlueprintCallable, Category = Data)
 	void SetBallCount(int NewBallCount) { BallCount = NewBallCount; }
 
-	
-	
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override //We add this function, overriding it from IAbilitySystemInterface.
+	{
+		return AbilitySystem;
+	};
 };

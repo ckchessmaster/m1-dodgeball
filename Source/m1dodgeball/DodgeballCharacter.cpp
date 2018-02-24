@@ -83,7 +83,7 @@ void ADodgeballCharacter::PossessedBy(AController * NewController)
 			
 			// Add special ability
 			ADodgeballPlayerController* Player = Cast<ADodgeballPlayerController>(NewController);
-			AbilitySystem->GiveAbility(FGameplayAbilitySpec(Player->GetAbilityClass().GetDefaultObject(), 1, 0));
+			AbilitySystem->GiveAbility(FGameplayAbilitySpec(Player->GetAbilityClass().GetDefaultObject(), 1, 1));
 		}
 
 		AbilitySystem->InitAbilityActorInfo(this, this);

@@ -15,6 +15,8 @@ class M1DODGEBALL_API ABallActor : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
 
+	bool bShouldDieOnHit;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile)
 	class UStaticMeshComponent* BallMesh;
@@ -44,4 +46,5 @@ public:
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 	
 	UStaticMeshComponent* GetMeshComponent() { return BallMesh; }
+	void SetDieOnHit(bool Val) { bShouldDieOnHit = Val; }
 };

@@ -2,6 +2,10 @@
 
 #include "InfiniteAmmoAbility.h"
 #include "DodgeballCharacter.h"
+#include "GameplayTagsModule.h"
+#include "AbilitySystemComponent.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEffectRemoved.h"
+
 
 UInfiniteAmmoAbility::UInfiniteAmmoAbility(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -14,10 +18,20 @@ void UInfiniteAmmoAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ADodgeballCharacter* Player = Cast<ADodgeballCharacter>(ActorInfo->OwnerActor.Get());
-	Player->SetBallCount(99);
+	//ADodgeballCharacter* Player = Cast<ADodgeballCharacter>(ActorInfo->OwnerActor.Get());
 
-	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+	//FActiveGameplayEffectHandle durationHandle = Player->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(AbilityDurationEffect.GetDefaultObject(), 1.f, FGameplayEffectContextHandle());
+	//
+	//// Store old details
+	//int oldBallCount = Player->GetBallCount();
+	//Player->SetBallCount(999);
+
+	//UAbilityTask_WaitGameplayEffectRemoved* test = UAbilityTask_WaitGameplayEffectRemoved::WaitForGameplayEffectRemoved(this, durationHandle);
+	//
+	//Player->SetBallCount(oldBallCount);
+
+	//CommitAbility(Handle, ActorInfo, ActivationInfo);
+	//EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
 

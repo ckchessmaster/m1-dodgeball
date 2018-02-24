@@ -35,7 +35,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info)
 	FAbilityInfo AbilityInfo;
 
+	UPROPERTY(EditAnywhere, Category = Effects)
+	TSubclassOf<UGameplayEffect> AbilityDurationEffect;
+
 public:
 	UFUNCTION(BlueprintPure)
 	FAbilityInfo GetAbilityInfo() { return AbilityInfo; }
+
+	//TSubclassOf<UGameplayEffect> GetAbilityDurationEffect() { return AbilityDurationEffect; }
 };
