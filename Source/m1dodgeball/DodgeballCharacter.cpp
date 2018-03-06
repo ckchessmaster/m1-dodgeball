@@ -10,6 +10,7 @@
 #include "Net/UnrealNetwork.h"
 #include "DodgeballGameMode.h"
 #include "DodgeballPlayerController.h"
+#include "GameplayTagsModule.h"
 
 
 // Sets default values
@@ -151,6 +152,12 @@ float ADodgeballCharacter::TakeDamage(float Damage, FDamageEvent const & DamageE
 	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	
 	if (HasAuthority()) {
+		// Check if we are immune
+		FGameplayTag tag = UGameplayTagsManager::Get().RequestGameplayTag("AbilityTags.Immune");
+		if (AbilitySystem->HasMatchingGameplayTag(tag)) {
+			return 0.f;
+		}
+
 		Health -= FinalDamage;
 
 		if (Health <= 0) {

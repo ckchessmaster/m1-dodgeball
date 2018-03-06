@@ -158,7 +158,7 @@ void ADodgeballGameMode::Tick(float DeltaTime)
 	}//end switch
 }
 
-void ADodgeballGameMode::OnMatchStateChanged(EMatchState NewMatchState)
+void ADodgeballGameMode::OnMatchStateChanged_Implementation(EMatchState NewMatchState)
 {
 	ADodgeballGameState* GameState = GetGameState<ADodgeballGameState>();
 	ADodgeballPlayerController* Player = Cast<ADodgeballPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));

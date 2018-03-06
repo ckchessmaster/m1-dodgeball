@@ -38,7 +38,9 @@ public:
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void OnMatchStateChanged(EMatchState NewMatchState);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMatchStateChanged(EMatchState NewMatchState);
+
 	virtual void OnPlayerDeath();
 };
 
