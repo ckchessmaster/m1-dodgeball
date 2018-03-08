@@ -22,6 +22,7 @@ public:
 	TSubclassOf<class UUserWidget> wMainMenu;
 	
 	// Variable to hold the widget after creating it
+	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* MainMenu;
 
 	// Override BeingPlay()

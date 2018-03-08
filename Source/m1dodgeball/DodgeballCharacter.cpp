@@ -10,7 +10,6 @@
 #include "Net/UnrealNetwork.h"
 #include "DodgeballGameMode.h"
 #include "DodgeballPlayerController.h"
-#include "GameplayTagsModule.h"
 
 
 // Sets default values
@@ -257,4 +256,15 @@ void ADodgeballCharacter::Die_Implementation()
 	}
 	
 	Destroy();
+}
+
+float ADodgeballCharacter::GetEffectTimeRemaining(FGameplayTag EffectTag) 
+{
+	TArray<float> ActiveEndTime = GetAbilitySystemComponent()->GetActiveEffectsTimeRemaining(FGameplayEffectQuery::MakeQuery_MatchAllOwningTags(FGameplayTagContainer(EffectTag)));
+
+	if (ActiveEndTime.Num() > 0) {
+		return ActiveEndTime[0];
+	}
+
+	return 0.0f;
 }

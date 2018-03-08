@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h" 
+#include "GameplayTagsModule.h"
 #include "DodgeballCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -105,6 +106,9 @@ public:
 	UFUNCTION(Reliable, NetMulticast)
 	void Die();
 	void Die_Implementation();
+
+	UFUNCTION(BlueprintPure, Category = Data)
+	float GetEffectTimeRemaining(FGameplayTag EffectTag);
 
 	UFUNCTION(BlueprintPure, Category = Data)
 	int GetBallCount() { return BallCount;	};
