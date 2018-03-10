@@ -26,19 +26,19 @@ void UThrowBallAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (BallClass != nullptr && ActorInfo->PlayerController != nullptr && HasAuthority(&ActivationInfo)) {
+	if (ActorInfo->PlayerController != nullptr && HasAuthority(&ActivationInfo)) {
 		CommitAbility(Handle, ActorInfo, ActivationInfo);
 
 		ADodgeballCharacter* Owner = Cast<ADodgeballCharacter>(ActorInfo->OwnerActor.Get());
 		UWorld* const World = GetWorld();
-		if (World) {
+		if (World != nullptr && Owner->GetBallClass() != nullptr) {
 			const FRotator SpawnRotation = ActorInfo->PlayerController->GetControlRotation();
 			const FVector SpawnLocation = Owner->GetActorLocation() + (Owner->GetActorForwardVector() * 2);
 
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
-			ABallActor* Ball = World->SpawnActor<ABallActor>(BallClass, SpawnLocation, SpawnRotation, SpawnParams);
+			ABallActor* Ball = World->SpawnActor<ABallActor>(Owner->GetBallClass(), SpawnLocation, SpawnRotation, SpawnParams);
 			Ball->SetIsActive(true);
 			Ball->SetOwner(ActorInfo->PlayerController.Get());
 

@@ -42,6 +42,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Abilities)
 	TSubclassOf<class UGameplayAbility> DefaultAttack;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Abilities)
+	TSubclassOf<class ABallActor> BallClass;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(EditAnywhere, Category = Camera)
 	float BaseTurnRate;
@@ -56,6 +59,9 @@ protected:
 	
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Stats)
 	int Health;
+
+	UPROPERTY(EditAnywhere, Category = Stats)
+	float PickupDistance;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -114,6 +120,11 @@ public:
 	int GetBallCount() { return BallCount;	};
 	UFUNCTION(BlueprintCallable, Category = Data)
 	void SetBallCount(int NewBallCount) { BallCount = NewBallCount; }
+
+	UFUNCTION(BlueprintPure, Category = Data)
+	TSubclassOf<class ABallActor> GetBallClass() { return BallClass; }
+	UFUNCTION(BlueprintCallable, Category = Data)
+	void SetBallClass(TSubclassOf<class ABallActor> NewClass) { BallClass = NewClass; }
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override //We add this function, overriding it from IAbilitySystemInterface.
 	{

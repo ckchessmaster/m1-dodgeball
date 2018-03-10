@@ -214,9 +214,8 @@ void ADodgeballCharacter::PickupBall_Implementation(FVector ForwardVector)
 		//CollisionParams.TraceTag = TraceTag;
 		FHitResult Hit(ForceInit);
 		UCameraComponent* Camera = GetFirstPersonCameraComponent();
-		FVector FinalLocation = (ForwardVector * 5000) + Camera->GetComponentLocation();
+		FVector FinalLocation = (ForwardVector * PickupDistance) + Camera->GetComponentLocation();
 		GetWorld()->LineTraceSingleByChannel(Hit, Camera->GetComponentLocation(), FinalLocation, ECollisionChannel::ECC_Visibility, CollisionParams);
-
 		ABallActor* ball = Cast<ABallActor>(Hit.Actor.Get());
 
 		if (ball) {

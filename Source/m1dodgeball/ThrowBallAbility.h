@@ -17,8 +17,7 @@ class M1DODGEBALL_API UThrowBallAbility : public UDodgeballGameplayAbility
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Abilities)
-	TSubclassOf<class ABallActor> BallClass;
+	
 public:
 	UThrowBallAbility(const FObjectInitializer& ObjectInitializer);
 
