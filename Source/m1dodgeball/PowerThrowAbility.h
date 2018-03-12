@@ -14,8 +14,6 @@ UCLASS()
 class M1DODGEBALL_API UPowerThrowAbility : public UDodgeballGameplayAbility
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+
+
 };

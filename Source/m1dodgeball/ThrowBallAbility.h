@@ -15,8 +15,6 @@ UCLASS()
 class M1DODGEBALL_API UThrowBallAbility : public UDodgeballGameplayAbility
 {
 	GENERATED_BODY()
-
-protected:
 	
 public:
 	UThrowBallAbility(const FObjectInitializer& ObjectInitializer);

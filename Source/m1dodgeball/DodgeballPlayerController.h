@@ -34,5 +34,6 @@ public:
 	void DisplayEndOfRound(int WinningTeam);
 	void DisplayEndOfGame(int WinningTeam);
 
+	UFUNCTION(BlueprintPure)
 	TSubclassOf<UDodgeballGameplayAbility> GetAbilityClass() { return AbilityClass; }
 };
